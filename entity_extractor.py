@@ -3,6 +3,7 @@
 import os
 import ahocorasick
 from sklearn.externals import joblib
+# import joblib
 import jieba
 import numpy as np
 
@@ -12,7 +13,7 @@ class EntityExtractor:
         cur_dir = '/'.join(os.path.abspath(__file__).split('/')[:-1])
         # 路径
         self.vocab_path = os.path.join(cur_dir, 'data/vocab.txt')
-        self.stopwords_path =os.path.join(cur_dir, 'data/stop_words.utf8')
+        self.stopwords_path = os.path.join(cur_dir, 'data/stop_words.utf8')
         self.word2vec_path = os.path.join(cur_dir, 'data/merge_sgns_bigram_char300.txt')
         # self.same_words_path = os.path.join(cur_dir, 'DATA/同义词林.txt')
         self.stopwords = [w.strip() for w in open(self.stopwords_path, 'r', encoding='utf8') if w.strip()]
@@ -23,10 +24,10 @@ class EntityExtractor:
         self.tfidf_model = joblib.load(self.tfidf_path)
         self.nb_model = joblib.load(self.nb_path)
 
-        self.disease_path = data_dir + 'disease_vocab.txt'
-        self.symptom_path = data_dir + 'symptom_vocab.txt'
-        self.alias_path = data_dir + 'alias_vocab.txt'
-        self.complication_path = data_dir + 'complications_vocab.txt'
+        self.disease_path = joblib.data_dir + 'disease_vocab.txt'
+        self.symptom_path = joblib.data_dir + 'symptom_vocab.txt'
+        self.alias_path = joblib.data_dir + 'alias_vocab.txt'
+        self.complication_path = joblib.data_dir + 'complications_vocab.txt'
 
         self.disease_entities = [w.strip() for w in open(self.disease_path, encoding='utf8') if w.strip()]
         self.symptom_entities = [w.strip() for w in open(self.symptom_path, encoding='utf8') if w.strip()]
