@@ -140,5 +140,5 @@ cython_debug/
 # neo4j database
 neo4j-5.5.0/
 
-# key-dir
-key/
+# secret-dir
+secret/

@@ -8,9 +8,20 @@ import os
 
 class MedicalGraph:
     def __init__(self):
+        try:
+            with open("secret/keys.csv", 'r', encoding='utf-8') as f:
+                for line in f:
+                    login_msg = line.split(',')
+        except IndexError:
+            print(IndexError)
+            exit(1)
         cur_dir = '/'.join(os.path.abspath(__file__).split('/')[:-1])
         self.data_path = os.path.join(cur_dir, 'DATA/disease.csv')
-        self.graph = Graph("http://localhost:7474", username="neo4j", password="123456789")
+        # 低版本
+        # self.graph = Graph(login_msg[0], username=login_msg[1], password=login_msg[2])
+        # 高版本
+        self.graph = Graph(login_msg[0], auth=(login_msg[1], login_msg[2]), name="Medical")
+        del login_msg
 
     def read_file(self):
         """
@@ -102,8 +113,8 @@ class MedicalGraph:
             diseases_infos.append(disease_dict)
 
         return set(diseases), set(symptoms), set(aliases), set(parts), set(departments), set(complications), \
-                set(drugs), disease_to_alias, disease_to_symptom, diseases_to_part, disease_to_department, \
-                disease_to_complication, disease_to_drug, diseases_infos
+            set(drugs), disease_to_alias, disease_to_symptom, diseases_to_part, disease_to_department, \
+            disease_to_complication, disease_to_drug, diseases_infos
 
     def create_node(self, label, nodes):
         """
@@ -133,6 +144,7 @@ class MedicalGraph:
                         treatment=disease_dict['treatment'], checklist=disease_dict['checklist'],
                         period=disease_dict['period'], rate=disease_dict['rate'],
                         money=disease_dict['money'])
+            # TODO: Debug KeyError: 'location' Bug
             self.graph.create(node)
             count += 1
             print(count)
@@ -144,7 +156,8 @@ class MedicalGraph:
         :return:
         """
         disease, symptom, alias, part, department, complication, drug, rel_alias, rel_symptom, rel_part, \
-        rel_department, rel_complication, rel_drug, rel_infos = self.read_file()
+            rel_department, rel_complication, rel_drug, rel_infos = self.read_file()
+        # TODO: fix "KeyError: 'location'" bug
         self.create_diseases_nodes(rel_infos)
         self.create_node("Symptom", symptom)
         self.create_node("Alias", alias)
@@ -157,7 +170,7 @@ class MedicalGraph:
 
     def create_graphRels(self):
         disease, symptom, alias, part, department, complication, drug, rel_alias, rel_symptom, rel_part, \
-        rel_department, rel_complication, rel_drug, rel_infos = self.read_file()
+            rel_department, rel_complication, rel_drug, rel_infos = self.read_file()
 
         self.create_relationship("Disease", "Alias", rel_alias, "ALIAS_IS", "别名")
         self.create_relationship("Disease", "Symptom", rel_symptom, "HAS_SYMPTOM", "症状")
