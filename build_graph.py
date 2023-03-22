@@ -8,19 +8,19 @@ import os
 
 class MedicalGraph:
     def __init__(self):
-        try:
-            with open("secret/keys.csv", 'r', encoding='utf-8') as f:
-                for line in f:
-                    login_msg = line.split(',')
-        except IndexError:
-            print(IndexError)
-            exit(1)
+        with open("secret/keys.csv", 'r', encoding='utf-8') as f:
+            login_msg = [line.split(',') for line in f]
         cur_dir = '/'.join(os.path.abspath(__file__).split('/')[:-1])
         self.data_path = os.path.join(cur_dir, 'DATA/disease.csv')
         # 低版本
         # self.graph = Graph(login_msg[0], username=login_msg[1], password=login_msg[2])
         # 高版本
-        self.graph = Graph(login_msg[0], auth=(login_msg[1], login_msg[2]), name="Medical")
+        # TODO 感觉是这里的问题，查一下文档
+        self.graph = Graph(
+            host=login_msg[0][0],  # neo4j 搭载服务器的ip地址，ifconfig可获取到
+            http_port=login_msg[0][1],  # neo4j 服务器监听的端口号
+            user=login_msg[0][2],  # 数据库user name，如果没有更改过，应该是neo4j
+            password=login_msg[0][3])
         del login_msg
 
     def read_file(self):
@@ -138,16 +138,49 @@ class MedicalGraph:
         :return:
         """
         count = 0
+        # # 查看disease_dict
+        # for i in range(10):
+        #     print(disease_info[i])
+        ########
+        # {'name': '尿路感染', 'age': '育龄女性及绝经后妇女,糖尿病及高龄，免疫缺陷', 'infection': '无传染性',
+        #  'insurance': '医保疾病', 'checklist': '肾脏B超 放射性核素肾图 逆行肾盂造影 泌尿系统CT 尿路平片 [详细]',
+        #  'treatment': '药物治疗 ', 'period': '2周', 'rate': '90%', 'money': '市三甲医院约（500-1000元）'}
+        ########
+
+        # Debug KeyError: 'location' Bug
+        # find which key is missing
+        # for disease_dict in disease_info:
+        #     name_f = "name" in disease_dict.keys()
+        #     age_f = "age" in disease_dict.keys()
+        #     infect_f = "infection" in disease_dict.keys()
+        #     insur_f = "insurance" in disease_dict.keys()
+        #     treat_f = "treatment" in disease_dict.keys()
+        #     check_f = "checklist" in disease_dict.keys()
+        #     period_f = "period" in disease_dict.keys()
+        #     rate_f = "rate" in disease_dict.keys()
+        #     money_f = "money" in disease_dict.keys()
+        #     find_mis = [name_f, age_f, infect_f, insur_f, treat_f, check_f, period_f, rate_f, money_f]
+        #     count += 1
+        #     for flag in find_mis:
+        #         if not flag:
+        #             print(disease_dict)
+        #             print(count)
+        #     del find_mis
+
         for disease_dict in disease_info:
             node = Node("Disease", name=disease_dict['name'], age=disease_dict['age'],
                         infection=disease_dict['infection'], insurance=disease_dict['insurance'],
                         treatment=disease_dict['treatment'], checklist=disease_dict['checklist'],
                         period=disease_dict['period'], rate=disease_dict['rate'],
                         money=disease_dict['money'])
-            # TODO: Debug KeyError: 'location' Bug
             self.graph.create(node)
             count += 1
             print(count)
+        # for node_name in disease_info:
+        #     node = Node("Disease", name=node_name['name'])
+        #     self.graph.create(node)
+        #     count += 1
+        #     print(count)
         return
 
     def create_graphNodes(self):
@@ -157,7 +190,6 @@ class MedicalGraph:
         """
         disease, symptom, alias, part, department, complication, drug, rel_alias, rel_symptom, rel_part, \
             rel_department, rel_complication, rel_drug, rel_infos = self.read_file()
-        # TODO: fix "KeyError: 'location'" bug
         self.create_diseases_nodes(rel_infos)
         self.create_node("Symptom", symptom)
         self.create_node("Alias", alias)
