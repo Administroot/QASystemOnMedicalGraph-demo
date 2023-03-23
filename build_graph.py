@@ -16,11 +16,12 @@ class MedicalGraph:
         # self.graph = Graph(login_msg[0], username=login_msg[1], password=login_msg[2])
         # 高版本
         # TODO 感觉是这里的问题，查一下文档
-        self.graph = Graph(
-            host=login_msg[0][0],  # neo4j 搭载服务器的ip地址，ifconfig可获取到
-            http_port=login_msg[0][1],  # neo4j 服务器监听的端口号
-            user=login_msg[0][2],  # 数据库user name，如果没有更改过，应该是neo4j
-            password=login_msg[0][3])
+        # self.graph = Graph(
+        #     host=login_msg[0][0],  # neo4j 搭载服务器的ip地址，ifconfig可获取到
+        #     http_port=login_msg[0][1],  # neo4j 服务器监听的端口号
+        #     user=login_msg[0][2],  # 数据库user name，如果没有更改过，应该是neo4j
+        #     password=login_msg[0][3])
+        self.graph = Graph(login_msg[0][0], auth=(login_msg[0][1], login_msg[0][2]), name="neo4j")
         del login_msg
 
     def read_file(self):

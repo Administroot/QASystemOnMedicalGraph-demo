@@ -6,6 +6,7 @@ except IndexError:
     print(IndexError)
     exit(1)
 
+print(login_msg)
 for i in range(len(login_msg[0])):
     print(f'login_msg[0][{i}]={login_msg[0][i]}')
 del login_msg
