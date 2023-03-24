@@ -5,8 +5,14 @@ from py2neo import Graph
 
 class AnswerSearching:
     def __init__(self):
-        self.graph = Graph("http://localhost:7474", username="neo4j", password="123456789")
+        with open("secret/keys.csv", 'r', encoding='utf-8') as f:
+            login_msg = [line.split(',') for line in f]
+        # New
+        self.graph = Graph(login_msg[0][0], auth=(login_msg[0][1], login_msg[0][2]), name="neo4j")
+        # Old
+        # self.graph = Graph("http://localhost:7474", username="neo4j", password="123456789")
         self.top_num = 10
+        del login_msg
 
     def question_parser(self, data):
         """

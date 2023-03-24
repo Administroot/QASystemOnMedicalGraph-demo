@@ -142,3 +142,5 @@ neo4j-5.5.0/
 
 # secret-dir
 secret/
+# models-dir
+models/

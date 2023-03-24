@@ -20,7 +20,8 @@ class EntityExtractor:
 
         # 意图分类模型文件
         self.tfidf_path = os.path.join(cur_dir, 'model/tfidf_model.m')
-        self.nb_path = os.path.join(cur_dir, 'model/intent_reg_model.m')  #朴素贝叶斯模型
+        self.nb_path = os.path.join(cur_dir, 'model/intent_reg_model.m')  # 朴素贝叶斯模型
+        # TODO 这里报错， 可能是模型的问题
         self.tfidf_model = joblib.load(self.tfidf_path)
         self.nb_model = joblib.load(self.nb_path)
 
