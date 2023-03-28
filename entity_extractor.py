@@ -2,8 +2,8 @@
 # coding: utf-8
 import os
 import ahocorasick
-from sklearn.externals import joblib
-# import joblib
+# from sklearn.externals import joblib
+import joblib
 import jieba
 import numpy as np
 
@@ -21,7 +21,7 @@ class EntityExtractor:
         # 意图分类模型文件
         self.tfidf_path = os.path.join(cur_dir, 'model/tfidf_model.m')
         self.nb_path = os.path.join(cur_dir, 'model/intent_reg_model.m')  # 朴素贝叶斯模型
-        # TODO 这里报错， 可能是模型的问题
+        # TODO 这里报错， 可能是第三方库版本的问题
         self.tfidf_model = joblib.load(self.tfidf_path)
         self.nb_model = joblib.load(self.nb_path)
 
@@ -29,7 +29,7 @@ class EntityExtractor:
         self.symptom_path = joblib.data_dir + 'symptom_vocab.txt'
         self.alias_path = joblib.data_dir + 'alias_vocab.txt'
         self.complication_path = joblib.data_dir + 'complications_vocab.txt'
-
+        
         self.disease_entities = [w.strip() for w in open(self.disease_path, encoding='utf8') if w.strip()]
         self.symptom_entities = [w.strip() for w in open(self.symptom_path, encoding='utf8') if w.strip()]
         self.alias_entities = [w.strip() for w in open(self.alias_path, encoding='utf8') if w.strip()]

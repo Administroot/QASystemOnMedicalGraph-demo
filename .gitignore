@@ -144,3 +144,9 @@ neo4j-5.5.0/
 secret/
 # models-dir
 models/
+
+#Jetbrains配置文件
+.idea/
+
+# conda配置环境
+.conda/
