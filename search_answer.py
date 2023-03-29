@@ -5,14 +5,19 @@ from py2neo import Graph
 
 class AnswerSearching:
     def __init__(self):
-        with open("secret/keys.csv", 'r', encoding='utf-8') as f:
-            login_msg = [line.split(',') for line in f]
-        # New
-        self.graph = Graph(login_msg[0][0], auth=(login_msg[0][1], login_msg[0][2]), name="neo4j")
-        # Old
-        # self.graph = Graph("http://localhost:7474", username="neo4j", password="123456789")
-        self.top_num = 10
-        del login_msg
+        try:
+            with open("secret/keys.csv", 'r', encoding='utf-8') as f:
+                login_msg = {line.strip().split(',')[0]:line.strip().split(',')[1] for line in f }
+            # New
+            self.graph = Graph(login_msg['url'], auth=(login_msg['username'], login_msg['password']), 
+                            name=login_msg['database'])
+            # Old
+            # self.graph = Graph("http://localhost:7474", username="neo4j", password="123456789")
+            self.top_num = 10
+            del login_msg
+        except KeyError:
+            print(KeyError)
+            exit(1)
 
     def question_parser(self, data):
         """

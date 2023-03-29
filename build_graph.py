@@ -8,20 +8,21 @@ import os
 
 class MedicalGraph:
     def __init__(self):
-        with open("secret/keys.csv", 'r', encoding='utf-8') as f:
-            login_msg = [line.split(',') for line in f]
-        cur_dir = '/'.join(os.path.abspath(__file__).split('/')[:-1])
-        self.data_path = os.path.join(cur_dir, 'DATA/disease.csv')
-        # 低版本
-        # self.graph = Graph(login_msg[0], username=login_msg[1], password=login_msg[2])
-        # 高版本
-        # self.graph = Graph(
-        #     host=login_msg[0][0],  # neo4j 搭载服务器的ip地址，ifconfig可获取到
-        #     http_port=login_msg[0][1],  # neo4j 服务器监听的端口号
-        #     user=login_msg[0][2],  # 数据库user name，如果没有更改过，应该是neo4j
-        #     password=login_msg[0][3])
-        self.graph = Graph(login_msg[0][0], auth=(login_msg[0][1], login_msg[0][2]), name="neo4j")
-        del login_msg
+        try:
+            with open("secret/keys.csv", 'r', encoding='utf-8') as f:
+                login_msg = {line.strip().split(',')[0]:line.strip().split(',')[1] for line in f }
+            cur_dir = '/'.join(os.path.abspath(__file__).split('/')[:-1])
+            self.data_path = os.path.join(cur_dir, 'DATA/disease.csv')
+            # 低版本
+            # self.graph = Graph(url, username, password)
+            # 高版本
+            # self.graph = Graph(url, auth=(username, password), name=database_name)
+            self.graph = Graph(login_msg['url'], auth=(login_msg['username'], login_msg['password']), 
+                            name=login_msg['database'])
+            del login_msg
+        except KeyError:
+            print(KeyError)
+            exit(1)
 
     def read_file(self):
         """
