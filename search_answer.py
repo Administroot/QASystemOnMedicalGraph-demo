@@ -7,10 +7,15 @@ class AnswerSearching:
     def __init__(self):
         try:
             with open("secret/keys.csv", 'r', encoding='utf-8') as f:
-                login_msg = {line.strip().split(',')[0]:line.strip().split(',')[1] for line in f }
+                login_msg = {
+                    line.strip().split(',')[0]: line.strip().split(',')[1]
+                    for line in f
+                }
             # New
-            self.graph = Graph(login_msg['url'], auth=(login_msg['username'], login_msg['password']), 
-                            name=login_msg['database'])
+            self.graph = Graph(login_msg['url'],
+                               auth=(login_msg['username'],
+                                     login_msg['password']),
+                               name=login_msg['database'])
             # Old
             # self.graph = Graph("http://localhost:7474", username="neo4j", password="123456789")
             self.top_num = 10
@@ -32,13 +37,16 @@ class AnswerSearching:
                 sql_["intention"] = intent
                 sql = []
                 if data.get("Disease"):
-                   sql = self.transfor_to_sql("Disease", data["Disease"], intent)
+                    sql = self.transfor_to_sql("Disease", data["Disease"],
+                                               intent)
                 elif data.get("Alias"):
                     sql = self.transfor_to_sql("Alias", data["Alias"], intent)
                 elif data.get("Symptom"):
-                    sql = self.transfor_to_sql("Symptom", data["Symptom"], intent)
+                    sql = self.transfor_to_sql("Symptom", data["Symptom"],
+                                               intent)
                 elif data.get("Complication"):
-                    sql = self.transfor_to_sql("Complication", data["Complication"], intent)
+                    sql = self.transfor_to_sql("Complication",
+                                               data["Complication"], intent)
 
                 if sql:
                     sql_['sql'] = sql
@@ -59,8 +67,10 @@ class AnswerSearching:
 
         # 查询症状
         if intent == "query_symptom" and label == "Disease":
-            sql = ["MATCH (d:Disease)-[:HAS_SYMPTOM]->(s) WHERE d.name='{0}' RETURN d.name,s.name".format(e)
-                   for e in entities]
+            sql = [
+                "MATCH (d:Disease)-[:HAS_SYMPTOM]->(s) WHERE d.name='{0}' RETURN d.name,s.name"
+                .format(e) for e in entities
+            ]
         if intent == "query_symptom" and label == "Alias":
             sql = ["MATCH (a:Alias)<-[:ALIAS_IS]-(d:Disease)-[:HAS_SYMPTOM]->(s) WHERE a.name='{0}' return " \
                    "d.name,s.name".format(e) for e in entities]
@@ -81,36 +91,55 @@ class AnswerSearching:
 
         # 查询治疗周期
         if intent == "query_period" and label == "Disease":
-            sql = ["MATCH (d:Disease) WHERE d.name='{0}' return d.name,d.period".format(e) for e in entities]
+            sql = [
+                "MATCH (d:Disease) WHERE d.name='{0}' return d.name,d.period".
+                format(e) for e in entities
+            ]
         if intent == "query_period" and label == "Alias":
-            sql = ["MATCH (d:Disease)-[]->(a:Alias) WHERE a.name='{0}' return d.name,d.period".format(e)
-                   for e in entities]
+            sql = [
+                "MATCH (d:Disease)-[]->(a:Alias) WHERE a.name='{0}' return d.name,d.period"
+                .format(e) for e in entities
+            ]
         if intent == "query_period" and label == "Symptom":
-            sql = ["MATCH (d:Disease)-[]->(s:Symptom) WHERE s.name='{0}' return d.name,d.period".format(e)
-                   for e in entities]
+            sql = [
+                "MATCH (d:Disease)-[]->(s:Symptom) WHERE s.name='{0}' return d.name,d.period"
+                .format(e) for e in entities
+            ]
         if intent == "query_period" and label == "Complication":
             sql = ["MATCH (d:Disease)-[]->(c:Complication) WHERE c.name='{0}' return d.name," \
                    "d.period".format(e) for e in entities]
 
         # 查询治愈率
         if intent == "query_rate" and label == "Disease":
-            sql = ["MATCH (d:Disease) WHERE d.name='{0}' return d.name,d.rate".format(e) for e in entities]
+            sql = [
+                "MATCH (d:Disease) WHERE d.name='{0}' return d.name,d.rate".
+                format(e) for e in entities
+            ]
         if intent == "query_rate" and label == "Alias":
-            sql = ["MATCH (d:Disease)-[]->(a:Alias) WHERE a.name='{0}' return d.name,d.rate".format(e)
-                   for e in entities]
+            sql = [
+                "MATCH (d:Disease)-[]->(a:Alias) WHERE a.name='{0}' return d.name,d.rate"
+                .format(e) for e in entities
+            ]
         if intent == "query_rate" and label == "Symptom":
-            sql = ["MATCH (d:Disease)-[]->(s:Symptom) WHERE s.name='{0}' return d.name,d.rate".format(e)
-                   for e in entities]
+            sql = [
+                "MATCH (d:Disease)-[]->(s:Symptom) WHERE s.name='{0}' return d.name,d.rate"
+                .format(e) for e in entities
+            ]
         if intent == "query_rate" and label == "Complication":
             sql = ["MATCH (d:Disease)-[]->(c:Complication) WHERE c.name='{0}' return d.name," \
                    "d.rate".format(e) for e in entities]
 
         # 查询检查项目
         if intent == "query_checklist" and label == "Disease":
-            sql = ["MATCH (d:Disease) WHERE d.name='{0}' return d.name,d.checklist".format(e) for e in entities]
+            sql = [
+                "MATCH (d:Disease) WHERE d.name='{0}' return d.name,d.checklist"
+                .format(e) for e in entities
+            ]
         if intent == "query_checklist" and label == "Alias":
-            sql = ["MATCH (d:Disease)-[]->(a:Alias) WHERE a.name='{0}' return d.name,d.checklist".format(e)
-                   for e in entities]
+            sql = [
+                "MATCH (d:Disease)-[]->(a:Alias) WHERE a.name='{0}' return d.name,d.checklist"
+                .format(e) for e in entities
+            ]
         if intent == "query_checklist" and label == "Symptom":
             sql = ["MATCH (d:Disease)-[]->(s:Symptom) WHERE s.name='{0}' return d.name," \
                    "d.checklist".format(e) for e in entities]
@@ -199,7 +228,8 @@ class AnswerSearching:
             for k, v in disease_dic.items():
                 if i >= 10:
                     break
-                final_answer += "疾病 {0} 的症状有：{1}\n".format(k, ','.join(list(set(v))))
+                final_answer += "疾病 {0} 的症状有：{1}\n".format(
+                    k, ','.join(list(set(v))))
                 i += 1
         # 查询疾病
         if intent == "query_disease":
@@ -208,9 +238,11 @@ class AnswerSearching:
                 d = data["d.name"]
                 disease_freq[d] = disease_freq.get(d, 0) + 1
             n = len(disease_freq.keys())
-            freq = sorted(disease_freq.items(), key=lambda x: x[1], reverse=True)
+            freq = sorted(disease_freq.items(),
+                          key=lambda x: x[1],
+                          reverse=True)
             for d, v in freq[:10]:
-                final_answer += "疾病为 {0} 的概率为：{1}\n".format(d, v/10)
+                final_answer += "疾病为 {0} 的概率为：{1}\n".format(d, v / 10)
         # 查询治疗方法
         if intent == "query_cureway":
             disease_dic = {}
@@ -226,7 +258,8 @@ class AnswerSearching:
             for d, v in disease_dic.items():
                 if i >= 10:
                     break
-                final_answer += "疾病 {0} 的治疗方法有：{1}；可用药品包括：{2}\n".format(d, v[0], ','.join(v[1:]))
+                final_answer += "疾病 {0} 的治疗方法有：{1}；可用药品包括：{2}\n".format(
+                    d, v[0], ','.join(v[1:]))
                 i += 1
         # 查询治愈周期
         if intent == "query_period":
@@ -242,7 +275,8 @@ class AnswerSearching:
             for k, v in disease_dic.items():
                 if i >= 10:
                     break
-                final_answer += "疾病 {0} 的治愈周期为：{1}\n".format(k, ','.join(list(set(v))))
+                final_answer += "疾病 {0} 的治愈周期为：{1}\n".format(
+                    k, ','.join(list(set(v))))
                 i += 1
         # 查询治愈率
         if intent == "query_rate":
@@ -258,7 +292,8 @@ class AnswerSearching:
             for k, v in disease_dic.items():
                 if i >= 10:
                     break
-                final_answer += "疾病 {0} 的治愈率为：{1}\n".format(k, ','.join(list(set(v))))
+                final_answer += "疾病 {0} 的治愈率为：{1}\n".format(
+                    k, ','.join(list(set(v))))
                 i += 1
         # 查询检查项目
         if intent == "query_checklist":
@@ -274,7 +309,8 @@ class AnswerSearching:
             for k, v in disease_dic.items():
                 if i >= 10:
                     break
-                final_answer += "疾病 {0} 的检查项目有：{1}\n".format(k, ','.join(list(set(v))))
+                final_answer += "疾病 {0} 的检查项目有：{1}\n".format(
+                    k, ','.join(list(set(v))))
                 i += 1
         # 查询科室
         if intent == "query_department":
@@ -290,7 +326,8 @@ class AnswerSearching:
             for k, v in disease_dic.items():
                 if i >= 10:
                     break
-                final_answer += "疾病 {0} 所属科室有：{1}\n".format(k, ','.join(list(set(v))))
+                final_answer += "疾病 {0} 所属科室有：{1}\n".format(
+                    k, ','.join(list(set(v))))
                 i += 1
         # 查询疾病描述
         if intent == "disease_describe":
@@ -305,16 +342,23 @@ class AnswerSearching:
                 rate = data['d.rate']
                 money = data['d.money']
                 if name not in disease_infos:
-                    disease_infos[name] = [age, insurance, infection, checklist, period, rate, money]
+                    disease_infos[name] = [
+                        age, insurance, infection, checklist, period, rate,
+                        money
+                    ]
                 else:
-                    disease_infos[name].extend([age, insurance, infection, checklist, period, rate, money])
+                    disease_infos[name].extend([
+                        age, insurance, infection, checklist, period, rate,
+                        money
+                    ])
             i = 0
             for k, v in disease_infos.items():
                 if i >= 10:
                     break
                 message = "疾病 {0} 的描述信息如下：\n发病人群：{1}\n医保：{2}\n传染性：{3}\n检查项目：{4}\n" \
                           "治愈周期：{5}\n治愈率：{6}\n费用：{7}\n"
-                final_answer += message.format(k, v[0], v[1], v[2], v[3], v[4], v[5], v[6])
+                final_answer += message.format(k, v[0], v[1], v[2], v[3], v[4],
+                                               v[5], v[6])
                 i += 1
 
         return final_answer
